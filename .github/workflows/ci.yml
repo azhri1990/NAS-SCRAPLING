@@ -235,6 +235,11 @@ jobs:
         run: |
           set -euo pipefail
           python -m venv .ci-venv
+          # Put the venv on PATH for every later step. A test that shells out to
+          # "pytest" (rather than importing it) does not see a virtualenv that
+          # is only reachable by absolute path, and fails with a misleading
+          # "pytest: not found".
+          echo "$PWD/.ci-venv/bin" >> "$GITHUB_PATH"
           .ci-venv/bin/python -m pip install --quiet --upgrade pip
           for req in requirements-test.txt requirements.txt; do
             if [ -f "$req" ]; then
